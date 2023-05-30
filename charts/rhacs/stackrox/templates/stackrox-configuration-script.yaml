@@ -36,3 +36,16 @@ data:
       - name: Store central route as a fact
         set_fact:
           f_stackrox_central_addr: "{{ `{{ r_stackrox_central_route.resources[0].spec.host }}` }}"
+
+      - name: Wait for Central availability
+        uri:
+          url: "https://{{ `{{ f_stackrox_central_addr }}/v1/ping }}` }}"
+          method: GET
+          user: admin
+          password: "{{ `{{ r_central_secret.resources[0].data.password | b64decode }}` }}"
+          force_basic_auth: true
+          validate_certs: false
+        register: result
+        until: result.status == 200
+        retries: 30
+        delay: 20
