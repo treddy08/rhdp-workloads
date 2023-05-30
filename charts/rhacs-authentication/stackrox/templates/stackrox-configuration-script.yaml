@@ -29,6 +29,10 @@ data:
             set_fact:
               ocp4_workload_rhacs_authentication_central_stackrox_url: https://{{ `{{ r_stackrox_route.resources[0].spec.host }}` }} # yamllint disable-line rule:line-length
 
+      - name: Debug
+        debug:
+          var: ocp4_workload_rhacs_authentication_central_stackrox_url
+
       - name: Create Identity Provider in ACS
         uri:
           url: "{{ `{{ ocp4_workload_rhacs_authentication_central_stackrox_url }}` }}/v1/authProviders"
