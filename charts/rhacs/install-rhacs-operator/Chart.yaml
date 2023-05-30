@@ -1,5 +1,5 @@
 apiVersion: v2
-name: rhacs-operator
+name: rhacs-operator-install
 description: A Helm chart to deploy and configure resources in the rhacs-operator namespace
 type: application
 

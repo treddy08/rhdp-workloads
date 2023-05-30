@@ -1,4 +1,5 @@
 stackrox:
   namespace: stackrox
   central:
-    password: ''
+    adminUser: admin
+    adminPassword: ''

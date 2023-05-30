@@ -1,5 +1,5 @@
 apiVersion: v2
-name: stackrox-multiuser
+name: stackrox-multiuser-configuration
 description: A Helm chart to deploy and configure resources in the stackrox namespace
 type: application
 
