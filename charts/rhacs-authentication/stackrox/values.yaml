@@ -1,0 +1,7 @@
+stackrox:
+  namespace: stackrox
+  central:
+    url: ''
+    adminUser: admin
+    adminPassword: ''
+    accessRole: Admin

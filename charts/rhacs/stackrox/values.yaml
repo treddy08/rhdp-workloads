@@ -1,6 +1,3 @@
-openshift:
-  adminUser: kubeadmin
-  adminPassword: XrP2X-cZ8X9-PZjg6-mdLDy
 stackrox:
   namespace: stackrox
   central:
