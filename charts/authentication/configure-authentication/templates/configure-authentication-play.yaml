@@ -2,7 +2,7 @@ kind: ConfigMap
 metadata:
   name:  cm-configure-authentication-play
   annotations:
-    argocd.argoproj.io/sync-wave: "3"
+    argocd.argoproj.io/sync-wave: "4"
 apiVersion: v1
 data:
   configure-authentication-play.yaml: |
