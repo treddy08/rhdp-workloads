@@ -1,4 +1,5 @@
 authentication:
   adminUser: admin
-  adminPassword: r3dh4t1!
-  userPassword: openshift
+  htpasswd:
+    adminPassword: r3dh4t1!
+    userPassword: openshift
