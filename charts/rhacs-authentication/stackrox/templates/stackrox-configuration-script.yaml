@@ -27,7 +27,7 @@ data:
 
           - name: Set stackrox url
             set_fact:
-              ocp4_workload_rhacs_authentication_central_stackrox_url: https://{{ `{{ r_stackrox_route.resources[0].spec.host }}` }} # yamllint disable-line rule:line-length
+              ocp4_workload_rhacs_authentication_central_stackrox_url: https://{{ `{{ r_stackrox_route.resources[0].spec.host }}` }}
 
           - name: Debug 1
             debug:
