@@ -20,11 +20,11 @@ spec:
         volumeMounts:
           - mountPath: /plays
             name: vol-configure-authentication-play
-          - mountPath: /tasks
+          - mountPath: /plays/tasks
             name: vol-configure-authentication-tasks
-          - mountPath: /templates
+          - mountPath: /plays/templates
             name: vol-configure-authentication-templates
-          - mountPath: /files
+          - mountPath: /plays/files
             name: vol-configure-authentication-files
       restartPolicy: Never
       serviceAccount: authentication-job-runner

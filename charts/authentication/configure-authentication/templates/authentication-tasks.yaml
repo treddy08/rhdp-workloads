@@ -101,12 +101,12 @@ data:
     - name: Create htpasswd Secret
       kubernetes.core.k8s:
         state: present
-        definition: "{{ `{{ lookup('template', '/templates/secret-htpasswd.yaml.j2' ) | from_yaml }}` }}"
+        definition: "{{ `{{ lookup('template', 'templates/secret-htpasswd.yaml.j2' ) | from_yaml }}` }}"
 
     - name: Update OAuth configuration
       kubernetes.core.k8s:
         state: present
-        definition: "{{ `{{ lookup('file', '/files/oauth-htpasswd.yaml' ) | from_yaml }}` }}"
+        definition: "{{ `{{ lookup('file', 'files/oauth-htpasswd.yaml' ) | from_yaml }}` }}"
 
     - name: Print user information messages
       when: ocp4_workload_authentication_enable_user_info_messages | bool
