@@ -27,7 +27,7 @@ spec:
           - mountPath: /files
             name: vol-configure-authentication-files
       restartPolicy: Never
-      serviceAccount: rhacs-job-runner
+      serviceAccount: authentication-job-runner
       volumes:
       - name: vol-configure-authentication-play
         configMap:
