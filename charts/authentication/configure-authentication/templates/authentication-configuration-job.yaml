@@ -17,7 +17,6 @@ spec:
             set -x
             pip install passlib openshift
             ansible-playbook -i localhost /plays/configure-authentication-play.yaml
-            trap : TERM INT; sleep infinity & wait
         image: quay.io/agnosticd/ee-multicloud:latest
         volumeMounts:
           - mountPath: /plays
