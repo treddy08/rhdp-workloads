@@ -19,10 +19,10 @@ spec:
         image: quay.io/agnosticd/ee-multicloud:latest
         volumeMounts:
           - mountPath: /scripts
-            name: configure-stackrox-volume
+            name: vol-configure-stackrox
       restartPolicy: Never
       serviceAccount: default
       volumes:
-      - name: configure-stackrox-volume
+      - name: vol-configure-stackrox
         configMap:
           name: cm-configure-stackrox
