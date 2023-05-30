@@ -5,14 +5,14 @@ metadata:
     argocd.argoproj.io/sync-wave: "1"
 apiVersion: v1
 data:
-  configure-multiuser-vars.yaml: |
-    ocp4_workload_rhacs_authentication_central_stackrox_url: {{ $.Values.stackrox.central.url | default "" | quote }}
-    ocp4_workload_rhacs_authentication_central_namespace: {{ $.Values.stackrox.namespace | default "" | quote }}
-    ocp4_workload_rhacs_authentication_central_admin_username: {{ $.Values.stackrox.central.adminUser | default "" | quote }}
-    ocp4_workload_rhacs_authentication_central_admin_password: {{ $.Values.stackrox.central.adminPassword | default "" | quote }}
-    ocp4_workload_rhacs_authentication_central_minimum_access_role: {{ $.Values.stackrox.central.accessRole | default "" | quote }}
   configure-multiuser-play.yaml: |
     - hosts: localhost
+      vars:
+        ocp4_workload_rhacs_authentication_central_stackrox_url: {{ $.Values.stackrox.central.url | default "" | quote }}
+        ocp4_workload_rhacs_authentication_central_namespace: {{ $.Values.stackrox.namespace | default "" | quote }}
+        ocp4_workload_rhacs_authentication_central_admin_username: {{ $.Values.stackrox.central.adminUser | default "" | quote }}
+        ocp4_workload_rhacs_authentication_central_admin_password: {{ $.Values.stackrox.central.adminPassword | default "" | quote }}
+        ocp4_workload_rhacs_authentication_central_minimum_access_role: {{ $.Values.stackrox.central.accessRole | default "" | quote }}
       tasks:
       - name: Set stackrox url if url not defined
         when: ocp4_workload_rhacs_authentication_central_stackrox_url | default("") | length == 0
