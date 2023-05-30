@@ -11,6 +11,7 @@ data:
       - name: Create kubeconfig
         shell: |
           oc login -u {{ $.Values.openshift.adminUser }} -p {{ $.Values.openshift.adminPassword }} --insecure-skip-tls-verify=true https://kubernetes.default.svc:6443
+
       - name: Get Central route
         k8s_info:
           kind: Route
