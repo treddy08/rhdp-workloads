@@ -4,4 +4,4 @@ openshift:
 stackrox:
   namespace: stackrox
   central:
-    password: ''
+    password: 'openshift'
