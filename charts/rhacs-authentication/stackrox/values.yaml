@@ -1,7 +1,7 @@
 stackrox:
   namespace: stackrox
   central:
-    url: 'a'
+    url: ''
     adminUser: admin
-    adminPassword: 'b'
+    adminPassword: ''
     accessRole: Admin
