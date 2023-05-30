@@ -21,19 +21,19 @@ data:
             k8s_info:
               api_version: route.openshift.io/v1
               kind: Route
-              namespace: "{{ ocp4_workload_rhacs_authentication_central_namespace }}"
+              namespace: "{{ `{{ ocp4_workload_rhacs_authentication_central_namespace }}` }}"
               name: central
             register: r_stackrox_route
 
           - name: Set stackrox url
             set_fact:
-              ocp4_workload_rhacs_authentication_central_stackrox_url: https://{{ r_stackrox_route.resources[0].spec.host }} # yamllint disable-line rule:line-length
+              ocp4_workload_rhacs_authentication_central_stackrox_url: https://{{ `{{ r_stackrox_route.resources[0].spec.host }}` }} # yamllint disable-line rule:line-length
 
       - name: Create Identity Provider in ACS
         uri:
-          url: "{{ ocp4_workload_rhacs_authentication_central_stackrox_url }}/v1/authProviders"
-          user: "{{ ocp4_workload_rhacs_authentication_central_admin_username }}"
-          password: "{{ ocp4_workload_rhacs_authentication_central_admin_password }}"
+          url: "{{ `{{ ocp4_workload_rhacs_authentication_central_stackrox_url }}` }}/v1/authProviders"
+          user: "{{ `{{ ocp4_workload_rhacs_authentication_central_admin_username }}` }}"
+          password: "{{ `{{ ocp4_workload_rhacs_authentication_central_admin_password }}` }}"
           force_basic_auth: true
           method: POST
           headers:
@@ -49,9 +49,9 @@ data:
 
       - name: Create group for Identity Provider
         uri:
-          url: "{{ ocp4_workload_rhacs_authentication_central_stackrox_url }}/v1/groups"
-          user: "{{ ocp4_workload_rhacs_authentication_central_admin_username }}"
-          password: "{{ ocp4_workload_rhacs_authentication_central_admin_password }}"
+          url: "{{ `{{ ocp4_workload_rhacs_authentication_central_stackrox_url }}` }}/v1/groups"
+          user: "{{ `{{ ocp4_workload_rhacs_authentication_central_admin_username }}` }}"
+          password: "{{ `{{ ocp4_workload_rhacs_authentication_central_admin_password }}` }}"
           force_basic_auth: true
           method: POST
           headers:
@@ -60,5 +60,5 @@ data:
           body:
             props:
               authProviderId: "{{ r_idp_response.json.id }}"
-            roleName: "{{ ocp4_workload_rhacs_authentication_central_minimum_access_role }}"
+            roleName: "{{ `{{ ocp4_workload_rhacs_authentication_central_minimum_access_role }}` }}"
           validate_certs: false
