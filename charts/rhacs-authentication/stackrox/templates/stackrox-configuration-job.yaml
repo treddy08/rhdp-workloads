@@ -15,7 +15,7 @@ spec:
         - '-c'
         - |
             set -x
-            ansible-playbook -i localhost /scripts/configure-multiuser-play.yaml
+            ansible-playbook -i localhost /scripts/configure-multiuser-play.yaml -e @/scripts/configure-multiuser-vars.yaml
         image: quay.io/agnosticd/ee-multicloud:latest
         volumeMounts:
           - mountPath: /scripts
