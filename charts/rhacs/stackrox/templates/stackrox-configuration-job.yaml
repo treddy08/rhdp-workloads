@@ -21,7 +21,7 @@ spec:
           - mountPath: /scripts
             name: vol-configure-stackrox
       restartPolicy: Never
-      serviceAccount: default
+      serviceAccount: rhacs-job-runner
       volumes:
       - name: vol-configure-stackrox
         configMap:
