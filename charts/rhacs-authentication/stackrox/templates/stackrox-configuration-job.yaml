@@ -1,7 +1,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: job-configure-stackrox
+  name: job-configure-multiuser
   annotations:
     argocd.argoproj.io/sync-wave: "2"
 spec:
