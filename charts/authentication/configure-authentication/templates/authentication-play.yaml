@@ -78,7 +78,7 @@ data:
 
       - name: Setup LDAP authentication
         when: ocp4_workload_authentication_idm_type == "ldap"
-        ansible.builtin.include_tasks: /tasks/setup_ldap.yml
+        ansible.builtin.include_tasks: tasks/setup_ldap.yml
 
       - name: Set up cluster admin users
         when: ocp4_workload_authentication_idm_type != "none"
