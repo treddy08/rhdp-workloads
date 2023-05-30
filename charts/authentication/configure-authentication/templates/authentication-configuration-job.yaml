@@ -1,0 +1,43 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: job-configure-authentication
+  annotations:
+    argocd.argoproj.io/sync-wave: "4"
+spec:
+  backoffLimit: 100
+  template:
+    spec:
+      containers:
+      - name: configure-authentication
+        command:
+        - /bin/bash
+        - '-c'
+        - |
+            set -x
+            ansible-playbook -i localhost /plays/configure-authentication-play.yaml
+        image: quay.io/agnosticd/ee-multicloud:latest
+        volumeMounts:
+          - mountPath: /plays
+            name: vol-configure-authentication-play
+          - mountPath: /tasks
+            name: vol-configure-authentication-tasks
+          - mountPath: /templates
+            name: vol-configure-authentication-templates
+          - mountPath: /files
+            name: vol-configure-authentication-files
+      restartPolicy: Never
+      serviceAccount: rhacs-job-runner
+      volumes:
+      - name: vol-configure-authentication-play
+        configMap:
+          name: cm-configure-authentication-play
+      - name: vol-configure-authentication-tasks
+        configMap:
+          name: cm-configure-authentication-tasks
+      - name: vol-configure-authentication-templates
+        configMap:
+          name: cm-configure-authentication-templates
+      - name: vol-configure-authentication-files
+        configMap:
+          name: cm-configure-authentication-files

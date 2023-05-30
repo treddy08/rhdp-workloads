@@ -1,0 +1,17 @@
+kind: ConfigMap
+metadata:
+  name:  cm-configure-authentication-tasks
+  annotations:
+    argocd.argoproj.io/sync-wave: "3"
+apiVersion: v1
+data:
+  secret-htpasswd.yaml.j2: |
+    ---
+    apiVersion: v1
+    kind: Secret
+    metadata:
+      name: htpasswd
+      namespace: openshift-config
+    type: Opaque
+    data:
+      htpasswd: {{ `{{ r_htpasswd_file['content'] }}` }}

@@ -1,0 +1,98 @@
+kind: ConfigMap
+metadata:
+  name:  cm-configure-authentication-play
+  annotations:
+    argocd.argoproj.io/sync-wave: "3"
+apiVersion: v1
+data:
+  configure-authentication-play.yaml: |
+    - hosts: localhost
+      vars:
+        become_override: false
+        ocp_username: "system:admin"
+        silent: false
+        ocp4_workload_authentication_idm_type: htpasswd
+        ocp4_workload_authentication_htpasswd_user_base: user
+        ocp4_workload_authentication_htpasswd_user_name: "{{ `{{ ocp4_workload_authentication_htpasswd_user_base }}` }}1"
+        ocp4_workload_authentication_htpasswd_user_count: "{{ `{{ user_count | default(num_users) | default(10) | int }}` }}"
+
+        ocp4_workload_authentication_htpasswd_user_password_randomized: false
+
+        ocp4_workload_authentication_htpasswd_user_password_length: 16
+
+        ocp4_workload_authentication_ldap_url: ldaps://ipa1.opentlc.com:636/cn=users,cn=accounts,dc=opentlc,dc=com?uid
+        ocp4_workload_authentication_ldap_ca_url: http://ipa1.opentlc.com/ipa/config/ca.crt
+        ocp4_workload_authentication_ldap_bind_dn: "uid=ose-mwl-auth,cn=users,cn=accounts,dc=opentlc,dc=com"
+
+        ocp4_workload_authentication_admin_user: admin
+
+        ocp4_workload_authentication_htpasswd_admin_password: ""
+        ocp4_workload_authentication_htpasswd_admin_password_length: 16
+
+        ocp4_workload_authentication_remove_kubeadmin: true
+
+        ocp4_workload_authentication_enable_user_info_messages: true
+        ocp4_workload_authentication_enable_user_info_data: "{{ `{{ ocp4_workload_authentication_htpasswd_user_count | int > 1 }}` }}"
+      tasks:
+      - name: Check that ocp4_workload_authentication_idm_type is defined and valid
+        ansible.builtin.assert:
+          that:
+          - ocp4_workload_authentication_idm_type is defined
+          - >-
+            ocp4_workload_authentication_idm_type == "none" or
+            ocp4_workload_authentication_idm_type == "htpasswd" or
+            ocp4_workload_authentication_idm_type == "ldap"
+          fail_msg: >-
+            ocp4_workload_authentication_idm_type is not defined or not in ('none', 'htpasswd', 'ldap').
+
+      - name: Retrieve OpenShift Ingress
+        kubernetes.core.k8s_info:
+          api_version: config.openshift.io/v1
+          kind: Ingress
+          name: cluster
+        register: r_ingress_config
+        until:
+        - r_ingress_config.resources.0 is defined
+        - r_ingress_config.resources | length  > 0
+        delay: 15
+        retries: 60
+
+      - name: Retrieve API server configuration (for API endpoint)
+        kubernetes.core.k8s_info:
+          api_version: config.openshift.io/v1
+          kind: Infrastructure
+          name: cluster
+        register: r_cluster
+
+      - name: Save OpenShift access facts
+        vars:
+          _ingress_config: "{{ `{{ r_ingress_config.resources[0] }}` }}"
+        ansible.builtin.set_fact:
+          _ocp4_workload_authentication_cluster_ingress_domain: "{{ `{{ _ingress_config.spec.domain }}` }}"
+          _ocp4_workload_authentication_console_route: "https://console-openshift-console.{{ `{{ _ingress_config.spec.domain }}` }}"
+          _ocp4_workload_authentication_api_server: "{{ `{{ r_cluster.resources[0].status.apiServerURL }}` }}"
+
+      - name: Setup htpasswd authentication
+        when: ocp4_workload_authentication_idm_type == "htpasswd"
+        ansible.builtin.include_tasks: /tasks/setup_htpasswd.yml
+
+      - name: Setup LDAP authentication
+        when: ocp4_workload_authentication_idm_type == "ldap"
+        ansible.builtin.include_tasks: /tasks/setup_ldap.yml
+
+      - name: Set up cluster admin users
+        when: ocp4_workload_authentication_idm_type != "none"
+        kubernetes.core.k8s:
+          state: present
+          definition: "{{ `{{ lookup('template', 'cluster_role_binding.yaml.j2') | from_yaml }}` }}"
+
+      - name: Remove kubeadmin user
+        when:
+        - ocp4_workload_authentication_idm_type != "none"
+        - ocp4_workload_authentication_remove_kubeadmin | bool
+        kubernetes.core.k8s:
+          state: absent
+          api_version: v1
+          kind: Secret
+          name: kubeadmin
+          namespace: kube-system
