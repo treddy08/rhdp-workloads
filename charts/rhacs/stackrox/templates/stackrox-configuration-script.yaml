@@ -39,7 +39,7 @@ data:
 
       - name: Wait for Central availability
         uri:
-          url: "https://{{ `{{ f_stackrox_central_addr }}` }}/v1/ping "
+          url: "https://{{ `{{ f_stackrox_central_addr }}` }}/v1/ping"
           method: GET
           user: admin
           password: "{{ `{{ r_central_secret.resources[0].data.password | b64decode }}` }}"
