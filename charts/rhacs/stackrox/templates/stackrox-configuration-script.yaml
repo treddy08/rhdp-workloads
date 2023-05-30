@@ -47,5 +47,5 @@ data:
           validate_certs: false
         register: result
         until: result.status == 200
-        retries: 30
-        delay: 20
+        retries: 1
+        delay: 10
