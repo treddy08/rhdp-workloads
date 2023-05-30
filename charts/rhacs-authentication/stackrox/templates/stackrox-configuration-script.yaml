@@ -6,11 +6,11 @@ metadata:
 apiVersion: v1
 data:
   configure-multiuser-vars.yaml: |
-    ocp4_workload_rhacs_authentication_central_stackrox_url: "{{ $.Values.stackrox.central.url | default '' }}"
-    ocp4_workload_rhacs_authentication_central_namespace: "{{ $.Values.stackrox.namespace | default '' }}"
-    ocp4_workload_rhacs_authentication_central_admin_username: "{{ $.Values.stackrox.central.adminUser | default '' }}"
-    ocp4_workload_rhacs_authentication_central_admin_password: "{{ $.Values.stackrox.central.adminPassword | default '' }}"
-    ocp4_workload_rhacs_authentication_central_minimum_access_role: "{{ $.Values.stackrox.central.accessRole | default '' }}"
+    ocp4_workload_rhacs_authentication_central_stackrox_url: "{{ $.Values.stackrox.central.url }}"
+    ocp4_workload_rhacs_authentication_central_namespace: "{{ $.Values.stackrox.namespace }}"
+    ocp4_workload_rhacs_authentication_central_admin_username: "{{ $.Values.stackrox.central.adminUser }}"
+    ocp4_workload_rhacs_authentication_central_admin_password: "{{ $.Values.stackrox.central.adminPassword }}"
+    ocp4_workload_rhacs_authentication_central_minimum_access_role: "{{ $.Values.stackrox.central.accessRole  }}"
   configure-multiuser-play.yaml: |
     - hosts: localhost
       tasks:
