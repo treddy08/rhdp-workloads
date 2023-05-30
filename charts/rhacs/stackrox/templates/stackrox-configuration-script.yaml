@@ -1,0 +1,127 @@
+kind: ConfigMap
+metadata:
+  name:  cm-configure-stackrox
+  annotations:
+    argocd.argoproj.io/sync-wave: "3"
+apiVersion: v1
+data:
+  configure-stackrox-play.yaml: |
+    - hosts: localhost
+      tasks:
+      - name: Get Central route
+        k8s_info:
+          kind: Route
+          api_version: route.openshift.io/v1
+          namespace: "{{ $.Values.stackrox.namespace }}"
+          name: central
+        register: r_stackrox_central_route
+        retries: 10
+        delay: 20
+        until:
+        - r_stackrox_central_route.resources[0].spec.host is defined
+
+      - name: Get Central secret
+        k8s_info:
+          kind: Secret
+          api_version: v1
+          namespace: "{{ $.Values.stackrox.namespace }}"
+          name: acs-password
+        register: r_central_secret
+        retries: 10
+        delay: 20
+        until:
+        - r_central_secret.resources is defined
+        - r_central_secret.resources | length > 0
+
+      - name: Store central route as a fact
+        set_fact:
+          f_stackrox_central_addr: "{{ `{{ r_stackrox_central_route.resources[0].spec.host }}` }}"
+
+      # - name: Wait for Central availability
+      #   uri:
+      #     url: "https://{{ `{{ f_stackrox_central_addr }}` }}/v1/ping"
+      #     method: GET
+      #     user: admin
+      #     password: "{{ `{{ r_central_secret.resources[0].data.password | b64decode }}` }}"
+      #     force_basic_auth: true
+      #     validate_certs: false
+      #   register: result
+      #   until: result.status == 200
+      #   retries: 30
+      #   delay: 20
+
+      # - name: Get cluster init bundle
+      #   uri:
+      #     url: "https://{{ f_stackrox_central_addr }}/v1/cluster-init/init-bundles"
+      #     # random name for init-bundle
+      #     body: "{ \"name\": \"prod-{{ lookup('password', '/dev/null chars=ascii_lowercase,digits length=8') }}\"}"
+      #     method: POST
+      #     user: admin
+      #     password: "{{ ocp4_workload_rhacs_central_admin_password }}"
+      #     body_format: json
+      #     force_basic_auth: true
+      #     validate_certs: false
+      #   register: r_stackrox_cluster_init_response
+
+      # - name: Store cluster init bundle as a fact
+      #   set_fact:
+      #     f_stackrox_bundle: "{{ r_stackrox_cluster_init_response.json.kubectlBundle | b64decode }}"
+
+      # - name: Create init-bundle secrets
+      #   k8s:
+      #     namespace: stackrox
+      #     state: present
+      #     definition: "{{ f_stackrox_bundle }}"
+
+      # - name: Install Sensor on OpenShift Container Platform
+      #   k8s:
+      #     state: present
+      #     definition:
+      #       apiVersion: platform.stackrox.io/v1alpha1
+      #       kind: SecuredCluster
+      #       metadata:
+      #         namespace: stackrox
+      #         name: stackrox-secured-cluster-services
+      #       spec:
+      #         clusterName: production
+      #         admissionControl:
+      #           listenOnCreates: true
+      #           listenOnEvents: true
+      #           listenOnUpdates: true
+      #           bypass: BreakGlassAnnotation
+      #           timeoutSeconds: 3
+      #           contactImageScanners: ScanIfMissing
+      #         perNode:
+      #           collector:
+      #             collection: KernelModule
+      #             imageFlavor: Regular
+      #           taintToleration: TolerateTaints
+
+      # - name: Wait for ready sensor
+      #   k8s_info:
+      #     name: sensor
+      #     kind: Deployment
+      #     api_version: apps/v1
+      #     namespace: stackrox
+      #   register: r_stackrox_sensor_deployment
+      #   until:
+      #     - r_stackrox_sensor_deployment.resources[0].status.readyReplicas is defined
+      #     - r_stackrox_sensor_deployment.resources[0].status.readyReplicas | int >= 1
+      #   delay: 20
+      #   retries: 15
+
+      # - name: For fun, create a link in the OpenShift Console
+      #   k8s:
+      #     state: present
+      #     definition:
+      #       apiVersion: console.openshift.io/v1
+      #       kind: ConsoleLink
+      #       metadata:
+      #         name: acs-console-link
+      #       spec:
+      #         applicationMenu:
+      #           imageURL: 'https://upload.wikimedia.org/wikipedia/commons/3/3a/OpenShift-LogoType.svg'
+      #           section: Red Hat Applications
+      #         href: 'https://{{ f_stackrox_central_addr }}'
+      #         location: ApplicationMenu
+      #         text: Red Hat Advanced Cluster Security for Kubernetes
