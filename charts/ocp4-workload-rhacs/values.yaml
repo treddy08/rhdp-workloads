@@ -1,0 +1,6 @@
+rhacs:
+  central:
+    adminUser: admin
+    adminPassword: ''
+  operator:
+    channel: latest

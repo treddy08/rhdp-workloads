@@ -1,6 +1,6 @@
 kind: ConfigMap
 metadata:
-  name:  cm-configure-authentication-files
+  name:  files-cm
   annotations:
     argocd.argoproj.io/sync-wave: "1"
 apiVersion: v1

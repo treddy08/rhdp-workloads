@@ -1,0 +1,44 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: playbook-job
+  annotations:
+    argocd.argoproj.io/sync-wave: "5"
+spec:
+  backoffLimit: 100
+  template:
+    spec:
+      containers:
+      - name: configure-authentication
+        command:
+        - /bin/bash
+        - '-c'
+        - |
+            set -x
+            pip install passlib openshift
+            ansible-playbook -i localhost /plays/playbook.yaml
+        image: quay.io/agnosticd/ee-multicloud:latest
+        volumeMounts:
+          - mountPath: /plays
+            name: vol-plays
+          - mountPath: /plays/tasks
+            name: vol-tasks
+          - mountPath: /plays/templates
+            name: vol-templates
+          - mountPath: /plays/files
+            name: vol-files
+      restartPolicy: Never
+      serviceAccount: playbook-runner
+      volumes:
+      - name: vol-plays
+        configMap:
+          name: playbook-cm
+      - name: vol-tasks
+        configMap:
+          name: tasks-cm
+      - name: vol-templates
+        configMap:
+          name: templates-cm
+      - name: vol-files
+        configMap:
+          name: files-cm

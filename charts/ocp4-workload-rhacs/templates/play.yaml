@@ -1,37 +1,124 @@
 kind: ConfigMap
 metadata:
-  name:  cm-configure-stackrox
+  name: playbook-cm
   annotations:
-    argocd.argoproj.io/sync-wave: "3"
+    argocd.argoproj.io/sync-wave: "1"
 apiVersion: v1
 data:
-  configure-stackrox-play.yaml: |
+  playbook.yaml: |
     - hosts: localhost
+      vars:
+        ocp4_workload_rhacs_central_admin_password: {{ $.Values.rhacs.central.adminPassword | default "" | quote }}
       tasks:
+      - name: Create RHACS operator namespace
+        k8s:
+          state: present
+          api_version: v1
+          kind: Namespace
+          name: rhacs-operator
+
+      - name: Create RHACS operator group
+        k8s:
+          state: present
+          definition:
+            apiVersion: operators.coreos.com/v1
+            kind: OperatorGroup
+            metadata:
+              name: rhacs-operator-og
+              namespace: rhacs-operator
+            spec: {}
+
+      - name: Create RHACS operator subscription
+        k8s:
+          state: present
+          definition:
+            apiVersion: operators.coreos.com/v1alpha1
+            kind: Subscription
+            metadata:
+              name: rhacs-operator
+              namespace: rhacs-operator
+            spec:
+              channel: "{{ $.Values.rhacs.operator.channel }}"
+            {{- if $.Values.rhacs.operator.startingCSV }}
+              startingCSV: "{{ $.Values.rhacs.operator.startingCSV }}"
+            {{- end }}
+              installPlanApproval: Automatic
+              name: rhacs-operator
+              source: redhat-operators
+              sourceNamespace: openshift-marketplace
+
+      - name: Create Central Namespace
+        k8s:
+          state: present
+          api_version: v1
+          kind: Namespace
+          name: stackrox
+
+      - name: Generate random password for Central admin
+        when: not ocp4_workload_rhacs_central_admin_password
+        set_fact:
+          ocp4_workload_rhacs_central_admin_password: >-
+              {{ `{{ lookup('password', '/dev/null chars=ascii_letters,digits '
+                ~ 'length=18'
+              ) }}` }}
+
+      - name: Create Secret for Central admin password
+        k8s:
+          state: present
+          definition:
+            apiVersion: v1
+            kind: Secret
+            metadata:
+              name: acs-password
+              namespace: stackrox
+            data:
+              password: "{{ `{{ ocp4_workload_rhacs_central_admin_password | b64encode }}` }}"
+            type: Opaque
+
+      - name: Create Central via CR
+        k8s:
+          state: present
+          definition:
+            apiVersion: platform.stackrox.io/v1alpha1
+            kind: Central
+            metadata:
+              namespace: stackrox
+              name: stackrox-central-services
+            spec:
+              central:
+                adminPasswordSecret:
+                  name: acs-password
+                exposure:
+                  loadBalancer:
+                    enabled: false
+                    port: 443
+                  nodePort:
+                    enabled: false
+                  route:
+                    enabled: true
+                persistence:
+                  persistentVolumeClaim:
+                    claimName: stackrox-db
+              egress:
+                connectivityPolicy: Online
+              scanner:
+                analyzer:
+                  scaling:
+                    autoScaling: Disabled
+                    replicas: 1
+                scannerComponent: Enabled
+
       - name: Get Central route
         k8s_info:
           kind: Route
           api_version: route.openshift.io/v1
-          namespace: "{{ $.Values.stackrox.namespace }}"
+          namespace: stackrox
           name: central
         register: r_stackrox_central_route
         retries: 10
         delay: 20
         until:
         - r_stackrox_central_route.resources[0].spec.host is defined
-
-      - name: Get Central secret
-        k8s_info:
-          kind: Secret
-          api_version: v1
-          namespace: "{{ $.Values.stackrox.namespace }}"
-          name: acs-password
-        register: r_central_secret
-        retries: 10
-        delay: 20
-        until:
-        - r_central_secret.resources is defined
-        - r_central_secret.resources | length > 0
 
       - name: Store central route as a fact
         set_fact:
@@ -42,7 +129,7 @@ data:
           url: "https://{{ `{{ f_stackrox_central_addr }}` }}/v1/ping"
           method: GET
           user: "{{ $.Values.stackrox.central.adminUser }}"
-          password: "{{ `{{ r_central_secret.resources[0].data.password | b64decode }}` }}"
+          password: "{{ `{{ ocp4_workload_rhacs_central_admin_password | b64decode }}` }}"
           force_basic_auth: true
           validate_certs: false
         register: result
@@ -56,7 +143,7 @@ data:
           body: "{ \"name\": \"prod-{{ `{{ lookup('password', '/dev/null chars=ascii_lowercase,digits length=8') }}` }}\"}"
           method: POST
           user: "{{ $.Values.stackrox.central.adminUser }}"
-          password: "{{ `{{ r_central_secret.resources[0].data.password | b64decode }}` }}"
+          password: "{{ `{{ ocp4_workload_rhacs_central_admin_password | b64decode }}` }}"
           body_format: json
           force_basic_auth: true
           validate_certs: false

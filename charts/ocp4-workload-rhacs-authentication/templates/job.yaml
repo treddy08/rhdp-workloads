@@ -1,7 +1,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: job-configure-multiuser
+  name: playbook-job
   annotations:
     argocd.argoproj.io/sync-wave: "2"
 spec:
@@ -9,20 +9,20 @@ spec:
   template:
     spec:
       containers:
-      - name: configure-multi-user
+      - name: playbook
         command:
         - /bin/bash
         - '-c'
         - |
             set -x
-            ansible-playbook -i localhost /scripts/configure-multiuser-play.yaml
+            ansible-playbook -i localhost /plays/playbook.yaml
         image: quay.io/agnosticd/ee-multicloud:latest
         volumeMounts:
-          - mountPath: /scripts
-            name: vol-configure-multiuser
+          - mountPath: /plays
+            name: vol-playbook
       restartPolicy: Never
-      serviceAccount: rhacs-job-runner
+      serviceAccount: playbook-runner
       volumes:
-      - name: vol-configure-multiuser
+      - name: vol-playbook
         configMap:
-          name: cm-configure-multiuser
+          name: playbook-cm

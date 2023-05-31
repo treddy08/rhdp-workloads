@@ -1,6 +1,6 @@
 kind: ConfigMap
 metadata:
-  name:  cm-configure-authentication-templates
+  name:  templates-cm
   annotations:
     argocd.argoproj.io/sync-wave: "3"
 apiVersion: v1

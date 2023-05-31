@@ -1,11 +1,11 @@
 kind: ConfigMap
 metadata:
-  name:  cm-configure-multiuser
+  name:  playbook-cm
   annotations:
     argocd.argoproj.io/sync-wave: "1"
 apiVersion: v1
 data:
-  configure-multiuser-play.yaml: |
+  playbook.yaml: |
     - hosts: localhost
       vars:
         ocp4_workload_rhacs_authentication_central_stackrox_url: {{ $.Values.stackrox.central.url | default "" | quote }}

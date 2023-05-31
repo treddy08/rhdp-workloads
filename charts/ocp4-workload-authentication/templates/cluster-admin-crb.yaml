@@ -1,12 +1,12 @@
 kind: ClusterRoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
-  name: authentication-job-runner-crb
+  name: playbook-runner-crb
   annotations:
     argocd.argoproj.io/sync-wave: "-1"
 subjects:
   - kind: ServiceAccount
-    name: authentication-job-runner
+    name: playbook-runner
     namespace: "{{ $.Release.Namespace }}"
 roleRef:
   apiGroup: rbac.authorization.k8s.io

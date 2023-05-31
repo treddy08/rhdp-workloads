@@ -1,6 +1,6 @@
 kind: ConfigMap
 metadata:
-  name:  cm-configure-authentication-tasks
+  name:  tasks-cm
   annotations:
     argocd.argoproj.io/sync-wave: "2"
 apiVersion: v1

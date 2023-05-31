@@ -1,5 +1,0 @@
-stackrox:
-  namespace: stackrox
-  central:
-    adminUser: admin
-    adminPassword: ''
