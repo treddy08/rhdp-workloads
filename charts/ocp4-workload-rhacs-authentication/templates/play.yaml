@@ -9,7 +9,7 @@ data:
     - hosts: localhost
       vars:
         ocp4_workload_rhacs_authentication_central_stackrox_url: {{ $.Values.stackrox.central.url | default "" | quote }}
-        ocp4_workload_rhacs_authentication_central_namespace: {{ $.Values.stackrox.namespace | default "" | quote }}
+        ocp4_workload_rhacs_authentication_central_namespace: stackrox
         ocp4_workload_rhacs_authentication_central_admin_username: {{ $.Values.stackrox.central.adminUser | default "" | quote }}
         ocp4_workload_rhacs_authentication_central_admin_password: {{ $.Values.stackrox.central.adminPassword | default "" | quote }}
         ocp4_workload_rhacs_authentication_central_minimum_access_role: {{ $.Values.stackrox.central.accessRole | default "" | quote }}

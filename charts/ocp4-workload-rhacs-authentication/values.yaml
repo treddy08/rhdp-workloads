@@ -1,5 +1,4 @@
-stackrox:
-  namespace: stackrox
+rhacs:
   central:
     url: ''
     adminUser: admin
