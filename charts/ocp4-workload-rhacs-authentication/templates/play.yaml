@@ -8,11 +8,11 @@ data:
   playbook.yaml: |
     - hosts: localhost
       vars:
-        ocp4_workload_rhacs_authentication_central_stackrox_url: {{ $.Values.stackrox.central.url | default "" | quote }}
+        ocp4_workload_rhacs_authentication_central_stackrox_url: {{ $.Values.rhacs.central.url | default "" | quote }}
         ocp4_workload_rhacs_authentication_central_namespace: stackrox
-        ocp4_workload_rhacs_authentication_central_admin_username: {{ $.Values.stackrox.central.adminUser | default "" | quote }}
-        ocp4_workload_rhacs_authentication_central_admin_password: {{ $.Values.stackrox.central.adminPassword | default "" | quote }}
-        ocp4_workload_rhacs_authentication_central_minimum_access_role: {{ $.Values.stackrox.central.accessRole | default "" | quote }}
+        ocp4_workload_rhacs_authentication_central_admin_username: {{ $.Values.rhacs.central.adminUser | default "" | quote }}
+        ocp4_workload_rhacs_authentication_central_admin_password: {{ $.Values.rhacs.central.adminPassword | default "" | quote }}
+        ocp4_workload_rhacs_authentication_central_minimum_access_role: {{ $.Values.rhacs.central.accessRole | default "" | quote }}
       tasks:
       - name: Set stackrox url if url not defined
         when: ocp4_workload_rhacs_authentication_central_stackrox_url | default("") | length == 0
