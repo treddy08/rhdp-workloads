@@ -138,7 +138,7 @@ data:
           url: "https://{{ `{{ f_stackrox_central_addr }}` }}/v1/ping"
           method: GET
           user: "{{ $.Values.rhacs.central.adminUser }}"
-          password: "{{ `{{ ocp4_workload_rhacs_central_admin_password | b64decode }}` }}"
+          password: "{{ `{{ ocp4_workload_rhacs_central_admin_password }}` }}"
           force_basic_auth: true
           validate_certs: false
         register: result
@@ -152,7 +152,7 @@ data:
           body: "{ \"name\": \"prod-{{ `{{ lookup('password', '/dev/null chars=ascii_lowercase,digits length=8') }}` }}\"}"
           method: POST
           user: "{{ $.Values.rhacs.central.adminUser }}"
-          password: "{{ `{{ ocp4_workload_rhacs_central_admin_password | b64decode }}` }}"
+          password: "{{ `{{ ocp4_workload_rhacs_central_admin_password }}` }}"
           body_format: json
           force_basic_auth: true
           validate_certs: false
