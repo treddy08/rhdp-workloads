@@ -27,7 +27,7 @@ data:
 
         ocp4_workload_authentication_admin_user: {{ $.Values.authentication.adminUser | default "admin" | quote }}
 
-        ocp4_workload_authentication_htpasswd_admin_password: {{ $.Values.authentication.adminPassword | default "" | quote }}
+        ocp4_workload_authentication_htpasswd_admin_password: {{ $.Values.authentication.htpasswd.adminPassword | default "" | quote }}
         ocp4_workload_authentication_htpasswd_admin_password_length: 16
 
         ocp4_workload_authentication_remove_kubeadmin: {{ $.Values.authentication.removeKubeAdmin }}
