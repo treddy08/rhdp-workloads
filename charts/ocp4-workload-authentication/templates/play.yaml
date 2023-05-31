@@ -17,7 +17,7 @@ data:
         ocp4_workload_authentication_htpasswd_user_count: "{{ `{{ user_count | default(num_users) | default(10) | int }}` }}"
 
         ocp4_workload_authentication_htpasswd_user_password_randomized: false
-        ocp4_workload_authentication_htpasswd_user_password: {{ $.Values.authentication.userPassword | default "" | quote }}
+        ocp4_workload_authentication_htpasswd_user_password: {{ $.Values.authentication.htpasswd.userPassword | default "" | quote }}
 
         ocp4_workload_authentication_htpasswd_user_password_length: 16
 
