@@ -137,7 +137,7 @@ data:
         uri:
           url: "https://{{ `{{ f_stackrox_central_addr }}` }}/v1/ping"
           method: GET
-          user: "{{ $.Values.stackrox.central.adminUser }}"
+          user: "{{ $.Values.rhacs.central.adminUser }}"
           password: "{{ `{{ ocp4_workload_rhacs_central_admin_password | b64decode }}` }}"
           force_basic_auth: true
           validate_certs: false
