@@ -28,6 +28,15 @@ data:
               namespace: rhacs-operator
             spec: {}
 
+      - name: Check if operator installed
+        shell: |
+          oc get csv -n rhacs-operator --no-headers | grep rhacs-operator | awk '{print $NF}'
+        register: r_operator_installed
+        retries: 30
+        delay: 10
+        until:
+        - r_operator_installed.stdout == 'Succeeded'
+
       - name: Create RHACS operator subscription
         k8s:
           state: present

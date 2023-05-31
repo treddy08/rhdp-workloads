@@ -3,3 +3,4 @@ authentication:
   htpasswd:
     adminPassword: r3dh4t1!
     userPassword: openshift
+  removeKubeAdmin: false

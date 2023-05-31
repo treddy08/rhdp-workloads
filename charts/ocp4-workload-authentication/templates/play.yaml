@@ -30,7 +30,7 @@ data:
         ocp4_workload_authentication_htpasswd_admin_password: {{ $.Values.authentication.adminPassword | default "" | quote }}
         ocp4_workload_authentication_htpasswd_admin_password_length: 16
 
-        ocp4_workload_authentication_remove_kubeadmin: true
+        ocp4_workload_authentication_remove_kubeadmin: {{ $.Values.authentication.removeKubeAdmin }}
 
         ocp4_workload_authentication_enable_user_info_messages: true
         ocp4_workload_authentication_enable_user_info_data: "{{ `{{ ocp4_workload_authentication_htpasswd_user_count | int > 1 }}` }}"
