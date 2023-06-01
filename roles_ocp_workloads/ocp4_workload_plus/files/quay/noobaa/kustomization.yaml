@@ -1,5 +1,0 @@
-resources:
-- noobaa.yaml
-- noobaa-pv-backing-store.yaml
-- noobaa-default-bucket-class.yaml
-- noobaa-wait-finish-job.yaml

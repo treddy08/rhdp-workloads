@@ -1,5 +1,0 @@
-credentials:
-  - username: testuser
-    password: testpassword
-  - username: operator
-    password: supersecretoperatorpassword

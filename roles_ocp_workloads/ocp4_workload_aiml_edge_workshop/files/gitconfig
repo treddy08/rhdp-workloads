@@ -1,5 +1,0 @@
-[user]
-  name = AIML Demo User
-  email = aimldemo@opentlc.com
-[http]
-  sslVerify = false

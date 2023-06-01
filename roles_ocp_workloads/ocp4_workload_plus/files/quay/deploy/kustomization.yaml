@@ -1,4 +1,0 @@
-resources:
-- quay-registry.yaml
-- argocd-rbac.yaml
-- quay-wait-finish-job.yaml

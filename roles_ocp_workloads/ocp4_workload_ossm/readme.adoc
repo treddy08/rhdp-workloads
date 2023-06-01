@@ -1,5 +1,0 @@
-= Red Hat OpenShift Service Mesh (OSSM)
-
-== Role overview
-
-This role installs Red Hat OpenShift Service Mesh (OSSM) into an OpenShift Cluster.

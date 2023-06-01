@@ -1,3 +1,0 @@
-= ocp4_workload_tekton_execution_environment - Deploy the assets required to run pipeline to build execution environment
-
-== Role overview
